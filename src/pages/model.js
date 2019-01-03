@@ -9,7 +9,7 @@ import {
 } from '../utils';
 
 // 合约地址
-const contractAddress = 'TMFTUYpBJw9rh6CnUzKd3b7Tvi1BUes42z';
+const contractAddress = 'TXtZYYQJHKdMYH5D2d3zZQFHwUfPMpoSfJ';
 
 export default {
   namespace: 'home',
@@ -17,6 +17,9 @@ export default {
     gameId: getGameId(),
     result: 0,
     contract: null,
+
+    resultGameId: '',
+    resultAmount: '',
   },
   subscriptions: {
     steup({ dispatch, history }) {
@@ -24,7 +27,6 @@ export default {
         if (typeof tronPay !== 'undefined') {
           tronWeb = tronPay.tronWeb || tronWeb
           if (tronWeb.isTronPay && tronWeb.ready) {
-            console.log(27);
             dispatch({ type: 'getContract' });
           }
         } else {
@@ -55,7 +57,24 @@ export default {
         console.error(err);
       }).then(() => {
       });
-    }
+    },
+    *setResult({ payload }, { put, select }) {
+      const { contract } = yield select((state) => (state.home));
+      const {
+        resultGameId,
+        resultAmount
+      } = payload;
+      console.log(resultGameId, resultAmount);
+      const res = yield contract.setGameResult(resultGameId, resultAmount).send({
+        callValue: 0,
+        shouldPollResponse: true,
+      });
+      if (res) {
+        alert('设置成功！');
+      } else {
+        alert('设置失败，请联系开发者！');
+      }
+    },
   },
   reducers: {
     // 设置合约
@@ -65,5 +84,17 @@ export default {
         contract: action.payload,
       };
     },
+    updateGameId(state, action) {
+      return {
+        ...state,
+        resultGameId: action.payload,
+      };
+    },
+    updateResult(state, action) {
+      return {
+        ...state,
+        resultAmount: action.payload,
+      };
+    }
   },
 };
