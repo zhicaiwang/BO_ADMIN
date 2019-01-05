@@ -1,7 +1,7 @@
 import { connect } from 'dva';
 import { Input, Button } from 'antd';
 import styles from './index.css';
-import { getGameId } from '../utils';
+import { getGameId, getStartTime, getEndTime } from '../utils';
 
 const HomePage = ({
   home,
@@ -17,6 +17,8 @@ const HomePage = ({
     <div>
       <h1>智能合约发布</h1>
       <h5>当前 gameId: {getGameId()}</h5>
+      <h5>开始时间：{new Date(getStartTime()).toString()}</h5>
+      <h5>结束时间：{new Date(getEndTime()).toString()}</h5>
       <Button
         onClick={() => {
           dispatch({ type: 'home/addGame' });
